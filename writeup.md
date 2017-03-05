@@ -40,19 +40,23 @@ Then I apply a gaussian blur with a kernel value of 5 to smooth the image, this 
 
 #### Step 3 
 
-After that, I apply canny algorithm with a min threhsold of 100 and a max thresold of 300 to find strong edges.
+After that, I apply canny algorithm with a min threhsold of 100 and a max thresold of 200 to find strong edges, as a ratio 1:2 or 1:3 is recommended.
 
 ![alt text][edges]
 
 #### Step 4
 
-Then I apply hough lines with a threshold of 50, a minimum line legth of 5 and a max line gap of 30.
+Then I clip the image with the region of interest to avoid doing Hough Lines transform on lines that are not interesting
 
 #### Step 5
 
+Then I apply hough lines with a threshold of 50, a minimum line legth of 20 and a max line gap of 10. Instead of using a big line gap value to find a long line that crosses the dashed line, I detect the small sections of the line and process it later in the draw_lines method.
+
+#### Step 6
+
 Then I modified draw_lines to get a single line on each side like this:
 
-I get the slope of the line, and if it is smaller than -0.4 I consider it to be in the left side, and if it is bigger than 0.4 then it is on the right side. 
+I get the slope of the line, and if it is smaller than -0.4 I consider it to be in the left side, and if it is bigger than 0.4 then it is on the right side. I also check if the line is in the first half or the second half of the image to avoid strange lines interfering.
 
 Then for each side I store each point in an array and I get the average value for x1,y1,x2,y2, then I get the slope and y-intercept of these lines to extend the line to the border of the image and the horizon.
 
@@ -60,7 +64,7 @@ Then for each side I store each point in an array and I get the average value fo
 
 #### Step 6
 
-Then I apply a mask with the region of interest to eliminate lines that are not relevant. This mask is propotional to the size of the image.
+Then I apply a mask again with the region of interest to cut the final lines. This mask is propotional to the size of the image.
 
 
 ###2. Identify potential shortcomings with your current pipeline
